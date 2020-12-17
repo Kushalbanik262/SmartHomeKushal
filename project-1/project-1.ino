@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*Kushal's IOT project
 project created on 10-12-2020
 A simple project for Home automation system which is a intregation of
@@ -33,6 +34,33 @@ DHT dht(DHTPIN, DHTTYPE);//Init of DHT sensor
 const long utcOffsetInSeconds = 5*60*60+30*60; //The NTP server timezone (Calculate it according to your location's Degrees and Mins)
 
 char daysOfTheWeek[7][12] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}; //Weekdays
+=======
+/*Kushal's IOT project*/
+#define BLYNK_PRINT Serial
+#include<Arduino.h>
+#include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
+#include <BlynkSimpleEsp8266_SSL.h>
+#include <SimpleTimer.h>
+#include <NTPClient.h>
+#include <WiFiUdp.h>
+#include "DHT.h"
+#include <Wire.h> 
+#include <LiquidCrystal_I2C.h>
+#include<ArduinoJson.h>
+
+
+// Set the LCD address to 0x27 for a 16 chars and 2 line display
+#define DHTPIN D8   
+#define DHTTYPE DHT11 
+
+SimpleTimer timer;
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+DHT dht(DHTPIN, DHTTYPE);
+const long utcOffsetInSeconds = 5*60*60+30*60;
+
+char daysOfTheWeek[7][12] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+>>>>>>> new
 
 // Define NTP Client to get time
 WiFiUDP ntpUDP; //Ntp supporter object of WIFIUDP class;
