@@ -1,85 +1,93 @@
 /*Kushal's IOT project
-Date:17-12-2020
+project created on 10-12-2020
+A simple project for Home automation system which is a intregation of
+Weather station and room security system.
+
+Thanks to the library creators for making my job easy.The definations of every segment is mentioned.
+My github repo link-https://github.com/Kushalbanik262/SmartHomeKushal.git
+Hardware used ESP8266(nodemcu). 
+Opensource project development using opensource libs.
+Feel free to contribute for more firmware efficiency.
 */
-#define BLYNK_PRINT Serial
-#include <ESP8266WiFi.h>
-#include <ESP8266HTTPClient.h>
-#include <BlynkSimpleEsp8266_SSL.h>
-#include <SimpleTimer.h>
-#include <NTPClient.h>
-#include <WiFiUdp.h>
-#include "DHT.h"
-#include <Wire.h> 
-#include <LiquidCrystal_I2C.h>
-#include<ArduinoJson.h>
+
+#define BLYNK_PRINT Serial 
+#include <ESP8266WiFi.h> //Main lib for ESP8266 
+#include <ESP8266HTTPClient.h> //For Http/Https api services
+#include <BlynkSimpleEsp8266_SSL.h> //Support lib of blynk
+#include <SimpleTimer.h> //Some scheduling is needed for task sequencing
+#include <NTPClient.h> //NTP server 
+#include <WiFiUdp.h> //supporting wifi lib
+#include "DHT.h" //Temp sensor protocol converter(DHT11/DHT22/DHT21) 
+#include <Wire.h> //For spi communication some functions helps for I2c interface
+#include <LiquidCrystal_I2C.h>//Lib for I2c and lcd interfacing
+#include<ArduinoJson.h> //The lib for arduino json manupulation
 
 
-// Set the LCD address to 0x27 for a 16 chars and 2 line display
-#define DHTPIN D8   
-#define DHTTYPE DHT11 
 
-SimpleTimer timer;
-LiquidCrystal_I2C lcd(0x27, 16, 2);
-DHT dht(DHTPIN, DHTTYPE);
-const long utcOffsetInSeconds = 5*60*60+30*60;
+#define DHTPIN D8 //Enter your pin except D0   
+#define DHTTYPE DHT11 //Your DHT sensor type
 
-char daysOfTheWeek[7][12] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+SimpleTimer timer; //Object of simpleTimer class;
+LiquidCrystal_I2C lcd(0x27, 16, 2);//My lcd is (16x2) here also Set the LCD address to 0x27 for a 16 chars and 2 line display
+DHT dht(DHTPIN, DHTTYPE);//Init of DHT sensor
+const long utcOffsetInSeconds = 5*60*60+30*60; //The NTP server timezone (Calculate it according to your location's Degrees and Mins)
+
+char daysOfTheWeek[7][12] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}; //Weekdays
 
 // Define NTP Client to get time
-WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP, "pool.ntp.org", utcOffsetInSeconds);
+WiFiUDP ntpUDP; //Ntp supporter object of WIFIUDP class;
+NTPClient timeClient(ntpUDP, "pool.ntp.org", utcOffsetInSeconds);//constructor initialization
 
-String apis = "http://api.openweathermap.org/data/2.5/find?q=Titagarh&units=metric&appid=b8b163e201dd3b3afa723b7f001375cd";
+String apis = "http://api.openweathermap.org/data/2.5/find?q={*YOUR_CITY_NAME*}&units=metric&appid={YOUR_API_KEY}";//The weather api service for more go through .md file
 // You should get Auth Token in the Blynk App.
 // Go to the Project Settings (nut icon).
-char auth[] = "paHIyAXiq3hQG2xsLfJwrIOWNyWGKVIa";
+char auth[] = "****";//Your blynk authentication Token
 
 // Your WiFi credentials.
 // Set password to "" for open networks.
-String ssid = "realme 7i";
-String pass = "Kushal1234";
+String ssid = "****";//your SSID
+String pass = "****";//your PASSWORD
 
-float h{0.0},t{0.0};
-short l;
+float h{0.0},t{0.0}; //Initalizing h(humidity) and t(temp) .
+short l;// Light luminicance
 
-short hr{0},mi{0};
-String da("");
-short mt;
-short co{0};
+short hr{0},mi{0}; //Initialization of HRS and MINS
+String da(""); //Date initialization
+short mt; //Motion control parameter
+short co{0}; //cloud schedular
 
-WiFiClient client;
+WiFiClient client;//WIFI client for specific web port handaling 
 
-String thingSpeakAddress= "http://api.thingspeak.com/update?";
-String writeAPIKey;
-String tsfield1Name;
-int hcount{0};
-int windsp;
-short clp;
+String thingSpeakAddress= "http://api.thingspeak.com/update?"; //Thingspeak cloud api url
+String writeAPIKey; //APIKEY 
+String tsfield1Name; //Field name of Thingspeak
+int windsp;//Windspeed from api service
+short clp; //cloud percentage of your location%
 
 
-void apiservice(void){
+void apiservice(void){//API service where we get the json of windspeed and cloud percentage
 HTTPClient http;
-StaticJsonDocument<5000> doc;
+StaticJsonDocument<5000> doc; //stringlength*8 should me min template value
 http.begin(apis);
-int r = http.GET();
+int r = http.GET(); 
 Serial.println(r);
 //Serial.print(http.getString());
 String payload = http.getString();
-DeserializationError err = deserializeJson(doc,payload.c_str());
+DeserializationError err = deserializeJson(doc,payload.c_str()); //Deserialization
 Serial.println(err.c_str());
 if(!err){
   Serial.println("...");
-  windsp = doc["list"][0]["wind"]["speed"];
-  clp = doc["list"][0]["clouds"]["all"];
+  windsp = doc["list"][0]["wind"]["speed"]; //Fetching windspeed
+  clp = doc["list"][0]["clouds"]["all"]; //Fetching cloudpercentage
 }
 
 }
 
-void gettime(){
+void gettime(){ //The main LCD display function which updates in every minutes
 digitalWrite(D0,0);  
 timeClient.update();
-int chr = timeClient.getHours();
-int cmi = timeClient.getMinutes();
+int chr = timeClient.getHours();//NTP hours
+int cmi = timeClient.getMinutes();//NTP Minutes
 String cda = daysOfTheWeek[timeClient.getDay()];
 if(co==0){cloud(1,t);co++;}
 else if(co==1){cloud(2,h);co++;}
@@ -122,18 +130,14 @@ da = cda;
 }
 digitalWrite(D0,1); 
 }
-void schedule(void){
-
-
-
-
+void schedule(void){ //This is schedule (static scheduling is not done contribute if have idea~~)
 
 
 
 }
-void cloud(int fi,int value){
+void cloud(int fi,int value){ //Uploads data to the thingspeak cloud
  String request_string;
-     HTTPClient http;
+     HTTPClient http;//http/https service object 
     //if (client.connect("api.thingspeak.com",80)) {
       request_string = thingSpeakAddress;
       request_string += "key=";
@@ -147,7 +151,7 @@ void cloud(int fi,int value){
       http.begin(request_string);
       int x = http.GET();
       Serial.println(x);
-      if(http.getString().length()==0){
+      if(http.getString().length()==0){//Show error if thingspeak get method is not valid
       Serial.println("Error");
       digitalWrite(D7,HIGH);
       }
@@ -158,20 +162,20 @@ void cloud(int fi,int value){
 
     //}
 }
-void wificheck(void){
+void wificheck(void){ //Function to check if the wifi is available or not
   int co{0};
   while (!WiFi.status() == WL_CONNECTED){
     Serial.print(".");
     lcd.clear();
     lcd.print("Wifi Connecting..");
     delay(300);
-    if(co++>20){ESP.restart();}
+    if(co++>20){ESP.restart();}//if exceeds 6 sec by searching
   }
 }
 
 
 
-void ReadTEMP(void){
+void ReadTEMP(void){//Reading the temp and hum in global variables
    h = dht.readHumidity();
    t = dht.readTemperature();
 
@@ -180,11 +184,11 @@ void ReadTEMP(void){
     return;
   }
   t-=4;
-  Blynk.virtualWrite(V0,t);
+  Blynk.virtualWrite(V0,t); //Blynk virtual writing to pins(V0,V1)
   Blynk.virtualWrite(V1,h);
 }
 
-void ReadFire(void){
+void ReadFire(void){//Reading from the fire sensor and giving the result to LCD
   bool p = digitalRead(D6);
   if(p){
     Blynk.notify("Fire Detected");
@@ -194,37 +198,37 @@ void ReadFire(void){
   
 }
 
-void ReadMotion(void){
+void ReadMotion(void){//Reading the motion from the PIR sensors
   short rd = digitalRead(D5);
   if(rd==1){
-    Blynk.notify("Motion Detected");
+    Blynk.notify("Motion Detected");//Blynk Notification
     mt = 1;
   }
 }
 
-void Readlight(void){
+void Readlight(void){//Reading the light lumi. from LDR sensor
   l = map(analogRead(A0),0,1024,0,100);
   Blynk.virtualWrite(V2,l);
 }
 
 
 
-void setup()
+void setup()//setup code
 {
   Serial.println(ssid);
   Serial.println(pass);
   pinMode(D7,OUTPUT);
-  lcd.begin();
-  timeClient.begin();
+  lcd.begin();//Starting lcd
+  timeClient.begin();//timer begin
   lcd.backlight();
-  lcd.setCursor(1,0);
+  lcd.setCursor(1,0);//setting cursor
   
   
   String star = String(ssid)+" "+"..";
   lcd.print(star);
   lcd.setCursor(0,1);
   lcd.print("Conn. Server");
-  
+                    //Configure pins as io as you need
   pinMode(A0,INPUT);
   pinMode(D5,INPUT);
   pinMode(D6,INPUT);
@@ -232,20 +236,21 @@ void setup()
   digitalWrite(D0,HIGH);
   Serial.begin(9600);
   
-  Blynk.begin(auth,ssid.c_str(),pass.c_str());
-  dht.begin();
+  Blynk.begin(auth,ssid.c_str(),pass.c_str());//starting blynk
+  dht.begin();//staring dht sensor
   lcd.clear();
-   
-timer.setInterval(100L, ReadMotion);
-timer.setInterval(100L,ReadFire);
-timer.setInterval(30000L,ReadTEMP);
-timer.setInterval(1000L,Readlight); 
-timer.setInterval(40000L,gettime); 
-//timer.setInterval(1000L,apiservice);
+
+//Scheduling is done based on the timings that you have created and blynk servers; 
+
+timer.setInterval(100L, ReadMotion);//For Motion
+timer.setInterval(100L,ReadFire);//For fire sensing
+timer.setInterval(30000L,ReadTEMP);//For Temp sensing
+timer.setInterval(1000L,Readlight); //For light sensing
+timer.setInterval(40000L,gettime); //For getting time and printing
 }
 
-void loop()
+void loop()//The main loop .Don't add any other parameters only work through scheduling for better performance
 {
-  Blynk.run();
-  timer.run();
+  Blynk.run();//Run blynk
+  timer.run();//Run timer object
 }
