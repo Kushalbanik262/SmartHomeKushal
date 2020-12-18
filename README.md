@@ -14,6 +14,8 @@ Let's come to the hardware parts of this---
 8. Some notification leds
 9. Jumper wires
 10. Header pins
+![IMG20201218214243](https://user-images.githubusercontent.com/59107993/102654207-2d8c4780-4196-11eb-9718-02aed468592d.jpg)
+
 
 
 
