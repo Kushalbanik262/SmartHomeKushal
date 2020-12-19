@@ -14,6 +14,7 @@ Let's come to the hardware parts of this---
 8. Some notification leds
 9. Jumper wires
 10. Header pins
+Total system overview------
 
 ![IMG_20201219_012312](https://user-images.githubusercontent.com/59107993/102655885-0aaf6280-4199-11eb-8800-92832c8b9e9f.jpg)
 
@@ -27,9 +28,23 @@ on -------->
 The API service is based on my location weather forcast.There are many parameters but for my requirements I am taking only those two which I have mentioned earlier.
 The link for the site - https://openweathermap.org/api .The data is taken as JSON format Deserialized from there and taken accordingly.The get request is done during scheduling and all the datas are extracted. See code for more about it.
 
-2.IOT smart room :- The second and one of the most important part is  smart home with security. The sensors like Motion sensor,Fire sensor are used here. The motion sensor is calibrated to get the readings after certain time intervals. Also the scheduling is done according to that in a syncronized way.The realtime datas are very sent to phone using blynk server at that moment.The attached part is a relay which is very necessary for controlling light and fan.
-The static scheduling which can be based on NTP server time or something else can be done (The place is vacant in code).
+2. IOT smart room :- The second and one of the most important part is  smart home with security. The sensors like Motion sensor,Fire sensor are used here. The motion sensor is calibrated to get the readings after certain time intervals. Also the scheduling is done according to that in a syncronized way.The realtime datas are very sent to phone using blynk server at that moment.The attached part is a relay which is very necessary for controlling light and fan.
+The static scheduling which can be based on NTP server time or something else can be done.
 
+()->The PIR module is used as motion detection sensor when this gets some motion or partial infrared then it triggers to a digital pin with high value.Then we got the value uploads to cloud and generates a notification to blynk. The fire sensor is also a sensor which detects the fire and then interrupt the fortware and send that to blynk server.Some scheudling timers are tuned to overcome some glittery outputs.
+
+This is the device LCD and datas:-
+![IMG_20201219_012119](https://user-images.githubusercontent.com/59107993/102694271-ecec0700-4245-11eb-947a-16439e033de9.jpg)
+
+
+
+ Cloud - The cloud services that I am using here are 1.Thingspeak 2.Blynk 
+1. Thingspeak:- I am using thingspeak cloud service as a sequenced data collector. That I can see a large timeseries data at one glance. There are 4 fields where I can see datas The first one is for Temp second one is for Humid the third one is for light luminicence and the forth one is for human motion tracking. Those are really helpful because just i have to do api GET method for that by a specific URL.My channel is in private mode for some security issues so the link is not available.But the pic is-
+![Thng1](https://user-images.githubusercontent.com/59107993/102694441-0d689100-4247-11eb-8be3-505035188b35.PNG)
+
+Data sampling of every specified fields are tuned based on priority like Temp and humidity is not taken that much fast but I take the light faster than those and the motion is fastest in that scenario.So the order is in right mode.
+
+2. Blynk
 
 
 
