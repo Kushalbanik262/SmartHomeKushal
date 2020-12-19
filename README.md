@@ -44,7 +44,11 @@ This is the device LCD and datas:-
 
 Data sampling of every specified fields are tuned based on priority like Temp and humidity is not taken that much fast but I take the light faster than those and the motion is fastest in that scenario.So the order is in right mode.
 
-2. Blynk
+2. Blynk:-Blynk is the most unique opensource IOT development plaform .I have used Blynk here to integrate the IOT system with mobile app for realtime monitor and control.This app consist of a UI and a backend.I have done the backend manually rather than their backend app wise pin configuraion.That means I have used all virtual pins for my own control rather than blynk and that helped a lot .some glimpses of the app ---
+![IMG_20201219_222403](https://user-images.githubusercontent.com/59107993/102697551-8cb48f80-425c-11eb-8702-d57e732c6a62.jpg)
+
+The Blynk.run() function does all of them at once in c++ code but the code is manupulated and integrated with evry other things those are mentioned here.
+
 
 
 
