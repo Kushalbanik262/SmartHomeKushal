@@ -17,9 +17,12 @@ Let's come to the hardware parts of this---
 Total system overview------
 
 ![IMG_20201219_012312](https://user-images.githubusercontent.com/59107993/102655885-0aaf6280-4199-11eb-8800-92832c8b9e9f.jpg)
-The circuit is very straight forward where i have manupulated pins in sequencial manner.The pic of circuit diagram---
+
+The circuit is very straight forward where i have manupulated pins in sequencial manner.Digital pins are mapped for digital sensors or digital outputs and only the adc pin is used for LDR.The pic of circuit diagram---
+
 ![Circuit Diagram](https://user-images.githubusercontent.com/59107993/102721616-e03ce100-4321-11eb-86da-4b8483fd8c0c.png)
-The pin details are in pin_Diagram file.
+
+The pin details are in pin_Diagram.xlsx file.
 
 Esp8266 is used here as main wifi module.It's peripherals are connected with other hardwares that are mentioned above.
 The Intrigations that the IOT device is doing 
@@ -52,7 +55,7 @@ Data sampling of every specified fields are tuned based on priority like Temp an
 The Blynk.run() function does all of them at once in c++ code but the code is manupulated and integrated with every other things those are mentioned here.
 
 
-
+Observations:- Most importent technical thing that can be done to upgrade the project is data handling.Feel free to contribute or give such ideas to get datas from there and process them using data science or other machine learning models and algorithums. The serverside data managment will help for more smart manupulations like turning of lights automatically by understanding user's behaviour or deep learning based home security .As datas are importent today we need to manupulate data efficiently so i am ready to go with that in this specified device.
 
 
 
