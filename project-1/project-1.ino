@@ -68,7 +68,7 @@ short clp; //cloud percentage of your location%
 
 void apiservice(void){//API service where we get the json of windspeed and cloud percentage
 HTTPClient http;
-StaticJsonDocument<5000> doc; //stringlength*8 should me min template value
+StaticJsonDocument<5000> doc; //stringlength*8 should be min template size value
 http.begin(apis);
 int r = http.GET(); 
 Serial.println(r);
@@ -79,12 +79,12 @@ Serial.println(err.c_str());
 if(!err){
   Serial.println("...");
   windsp = doc["list"][0]["wind"]["speed"]; //Fetching windspeed
-  clp = doc["list"][0]["clouds"]["all"]; //Fetching cloudpercentage
+  clp = doc["list"][0]["clouds"]["all"]; //Fetching cloud percentage
 }
 
 }
 
-void gettime(){ //The main LCD display function which updates in every minutes
+void gettime(){ //The main LCD display function which gets update in every minutes
 digitalWrite(D0,0);  
 timeClient.update();
 int chr = timeClient.getHours();//NTP hours
@@ -152,7 +152,7 @@ void cloud(int fi,int value){ //Uploads data to the thingspeak cloud
       http.begin(request_string);
       int x = http.GET();
       Serial.println(x);
-      if(http.getString().length()==0){//Show error if thingspeak get method is not valid
+      if(http.getString().length()==0){//Show error if thingspeak get method is not valid not returns entry count
       Serial.println("Error");
       digitalWrite(D7,HIGH);
       }
@@ -229,7 +229,7 @@ void setup()//setup code
   lcd.print(star);
   lcd.setCursor(0,1);
   lcd.print("Conn. Server");
-                    //Configure pins as io as you need
+                    //Configure pins as i/o as you need
   pinMode(A0,INPUT);
   pinMode(D5,INPUT);
   pinMode(D6,INPUT);
