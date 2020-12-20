@@ -49,6 +49,8 @@ Data sampling of every specified fields are tuned based on priority like Temp an
 
 The Blynk.run() function does all of them at once in c++ code but the code is manupulated and integrated with every other things those are mentioned here.
 The circuit is very straight forward where i have manupulated pins in sequencial manner.The pic of circuit diagram---
+![Circuit Diagram](https://user-images.githubusercontent.com/59107993/102721616-e03ce100-4321-11eb-86da-4b8483fd8c0c.png)
+The pin details are in pin_Diagram file.
 
 
 
